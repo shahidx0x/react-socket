@@ -7,6 +7,9 @@
 var app = require("../app");
 var debug = require("debug")("react-socket:server");
 var http = require("http");
+var { Server } = require("socket.io");
+var cors = require("cors");
+app.use(cors());
 
 /**
  * Get port from environment and store in Express.
@@ -20,6 +23,17 @@ app.set("port", port);
  */
 
 var server = http.createServer(app);
+
+/**
+ * Create SOCKET.IO server.
+ */
+
+var io = new Server(server, {
+  cors: {
+    origin: process.env.CLIENT_ADDRESS,
+    methods: [GET, POST],
+  },
+});
 
 /**
  * Listen on provided port, on all network interfaces.
