@@ -1,0 +1,16 @@
+{
+  "name": "react-socket",
+  "version": "1.0.0",
+  "description": "real time chat application using socket",
+  "scripts": {
+    "start": "concurrently \"npm run server\" \"npm run client\"",
+    "server": "cd server && yarn start",
+    "client": "cd client && yarn run dev"
+  },
+  "repository": "https://github.com/shahidx0x/react-socket.git",
+  "author": "shahidx0x <dev.imshahid@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "concurrently": "^8.2.2"
+  }
+}
