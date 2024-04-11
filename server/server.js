@@ -26,8 +26,8 @@ var server = http.createServer(app);
 /**
  * Create SOCKET.IO server.
  */
+// const clients = {};
 const clients = {};
-
 var io = new Server(server, {
   cors: {
     origin: process.env.CLIENT_ADDRESS,
@@ -36,15 +36,11 @@ var io = new Server(server, {
 });
 
 io.on("connection", (socket) => {
-  clients[socket.id] = socket;
   console.log(`socket ${socket.id} is connected to the server`);
+  clients[socket.id] = socket;
 
   socket.on("msg_sent_evnt", (data) => {
-    const { clientId, msg } = data;
-
-    if (clients[clientId]) {
-      clients[clientId].emit("emt_rcv_msg", { resType: "server", msg });
-    }
+    socket.broadcast.emit("emt_rcv_msg", { clientId: socket.id, resType: "server", msg: data.msg });
   });
 
   socket.on("disconnect", () => {
