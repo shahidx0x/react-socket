@@ -4,9 +4,10 @@
  * Module dependencies.
  */
 require("dotenv").config();
-var app = require("../app");
+
 var debug = require("debug")("react-socket:server");
 var http = require("http");
+var app = require("./app");
 var { Server } = require("socket.io");
 
 /**
@@ -25,6 +26,7 @@ var server = http.createServer(app);
 /**
  * Create SOCKET.IO server.
  */
+const clients = {};
 
 var io = new Server(server, {
   cors: {
@@ -34,7 +36,20 @@ var io = new Server(server, {
 });
 
 io.on("connection", (socket) => {
+  clients[socket.id] = socket;
   console.log(`socket ${socket.id} is connected to the server`);
+
+  socket.on("msg_sent_evnt", (data) => {
+    const { clientId, msg } = data;
+
+    if (clients[clientId]) {
+      clients[clientId].emit("emt_rcv_msg", { resType: "server", msg });
+    }
+  });
+
+  socket.on("disconnect", () => {
+    delete clients[socket.id];
+  });
 });
 /**
  * Listen on provided port, on all network interfaces.
